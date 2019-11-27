@@ -1,0 +1,39 @@
+---
+title: "data cleaning"
+author: "Zining Fan"
+date: "11/26/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(robotstxt)
+library(ggplot2)
+library(tidyverse)
+library(rvest)
+library(stringr)
+paths_allowed("https://www.bls.gov/bls/news-release/laus.htm#2019")
+page <- read_html("https://www.bls.gov/bls/news-release/laus.htm#2019")
+links <- page %>%
+  html_nodes("ul li a") %>%html_attr("href")
+links<-as.data.frame(links)
+colnames(links)<-c("link")
+links_filter<-filter(links, str_detect(link,'/news.release/')==TRUE)
+links_filter<-filter(links_filter, str_detect(link,'pdf')==FALSE)
+links_filter<-filter(links_filter, str_detect(link,'archives')==TRUE | str_detect(link,'history')==TRUE )
+StrCat<-function(link)
+{
+  if(str_detect(link,'https')==FALSE)
+  {
+    return(str_c('https://www.bls.gov',link))
+  }
+  return(as.character(link))
+}
+links_filter_tp<-lapply(links_filter$link,StrCat)
+links_filter_tp<-do.call(rbind.data.frame, links_filter_tp)
+names(links_filter_tp) <- c("link")
+```
+
