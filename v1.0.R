@@ -4,6 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(geojsonio)
 library(tigris)
+library(zoo)
 state=states(cb=T)
 
 # you would need to modify the implementation here, we need column having:
